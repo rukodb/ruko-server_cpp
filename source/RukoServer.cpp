@@ -49,9 +49,9 @@ void RukoServer::run() {
     while (true) {
         Socket client = socket.acceptClient();
         lg.debug("New client " + std::to_string(client.getId()) + ".");
-        threads.emplace_back([&, client{std::move(client)}]() mutable {
-            handleClient(client);
-        });
+        threads.emplace_back(std::bind([&] (Socket &socket) mutable {
+            handleClient(socket);
+        }, std::move(client)));
     }
 }
 

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <cstddef>
 #include "serialization.hpp"
 #include "Logger.hpp"
 
@@ -72,7 +73,7 @@ public:
     Object(float val);
     Object(bool val);
     Object(int val);
-    Object(nullptr_t val);
+    Object(std::nullptr_t val);
     Object(const DictData &data);
     Object(const Map<Str, Object> &data);
     Object(const ListData &data);

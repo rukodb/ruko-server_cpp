@@ -29,7 +29,7 @@ Bytes &operator+=(Bytes &a, const Bytes &b);
 
 template<typename T>
 const T *bytesToPointer(const Bytes &bytes) {
-    static_assert(sizeof(T) == sizeof(Byte));
+    static_assert(sizeof(T) == sizeof(Byte), "Casting incompatible pointer");
     return reinterpret_cast<const T *>(bytes.data());
 }
 

@@ -24,8 +24,8 @@ public:
     }
 
     struct Frame {
-        Object *obj = nullptr;
-        IndexNode::Ptr *index = nullptr;
+        Object *obj;
+        IndexNode::Ptr *index;
         Str key;
 
         Frame traverse(const Str &key, bool createIndex = false, bool createObj = false) {
