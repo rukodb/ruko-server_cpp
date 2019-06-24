@@ -19,10 +19,6 @@ using std::deque;
 
 class IndexManager {
 public:
-    static bool isValid(const Vec<Str> &keys) {
-        return !keys.empty() && !keys[keys.size() - 1].empty();
-    }
-
     struct Frame {
         Object *obj;
         IndexNode::Ptr *index;
@@ -501,8 +497,16 @@ public:
         }
         return obj;
     }
-    
-    Object getVal(deque<Frame> &frames, const Str &index, Object &dbRoot) {
+
+    /**
+     * Return a representing of the mapping at the current node
+     * If no mapping exists there, an empty object is returned
+     * @param frames Frames collected from traversing to node
+     * @param index The index by which to visualize
+     * @param dbRoot Root database object
+     * @return An object representing the mapping
+     */
+    Object getMappingRepresentation(deque<Frame> &frames, const Str &index, Object &dbRoot) {
         auto loc = extractLocation(frames, true);
         Object res = Object(DICT_ID);
         auto &valMap = res.get<DictData>().map;
@@ -553,6 +557,13 @@ public:
      */
     Bytes toBytes() {
         return concat(serialize(root), serialize(mappings));
+    }
+
+    /**
+     * Check if there were errors in key conversion
+     */
+    static bool isValid(const Vec<Str> &keys) {
+        return !keys.empty() && !keys[keys.size() - 1].empty();
     }
 
 private:

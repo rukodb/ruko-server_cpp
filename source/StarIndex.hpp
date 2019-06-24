@@ -11,6 +11,10 @@ struct StarIndex {
     StarIndex(Vec<Str> location, Vec<Str> pattern, IndexNode &node) :
             location(std::move(location)), pattern(std::move(pattern)), node(&node) {}
 
+    StarIndex(const Byte *data, size_t &p);
+
+    Bytes toBytes() const;
+
     bool operator==(const StarIndex &other) {
         return location == other.location && pattern == other.pattern;
     }
@@ -18,9 +22,5 @@ struct StarIndex {
     bool operator!=(const StarIndex &other) {
         return !(*this == other);
     }
-
-    StarIndex(const Byte *data, size_t &p);
-
-    Bytes toBytes() const;
 };
 

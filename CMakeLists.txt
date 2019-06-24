@@ -7,8 +7,6 @@ include_directories(source)
 include_directories(libs)
 
 add_library(ruko-common
-        source/bytes.cpp
-        source/bytes.hpp
         source/IndexManager.cpp
         source/IndexManager.hpp
         source/IndexNode.cpp
@@ -34,7 +32,7 @@ add_library(ruko-common
         source/StarIndex.cpp
         source/StarIndex.hpp
         source/utils.cpp
-        source/utils.hpp libs/backtrace.cpp libs/backtrace.hpp source/test.cpp source/Logger.cpp)
+        source/utils.hpp libs/backtrace.cpp libs/backtrace.hpp source/Logger.cpp)
 
 add_executable(ruko-server
         source/main.cpp)

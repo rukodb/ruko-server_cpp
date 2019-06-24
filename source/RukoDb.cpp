@@ -76,7 +76,7 @@ Object RukoDb::get(Vec<Str> keys, const Vec<Str> &fields, const Vec<Str> &exclud
             lg.info("No indexable data for last index");
             return {};
         }
-        auto res = indices.getVal(frames, lastBy, db);
+        auto res = indices.getMappingRepresentation(frames, lastBy, db);
         if (res.isEmpty()) {
             return cloneIndexableBy(*obj, lastBy, fields, exclude);
         }
