@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.4.1)
 project(ruko_cpp)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -52,4 +52,4 @@ target_link_libraries(ruko-server ruko-common)
 target_link_libraries(ruko-test ruko-common)
 
 include(GNUInstallDirs)
-install(TARGETS ruko-server)
+install(TARGETS ruko-server DESTINATION ${CMAKE_INSTALL_BINDIR})
