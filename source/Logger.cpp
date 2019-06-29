@@ -1,3 +1,64 @@
 #include "Logger.hpp"
 
 Logger lg;
+
+Logger::Logger(Logger::Level level) : level(level),
+                                      streams((unsigned int) (Level::critical) + 1, nullptr) {}
+
+void Logger::debug(const std::string &msg) {
+    log(Level::debug, msg);
+}
+
+void Logger::info(const std::string &msg) {
+    log(Level::info, msg);
+}
+
+void Logger::warning(const std::string &msg) {
+    log(Level::warning, msg);
+}
+
+void Logger::critical(const std::string &msg) {
+    log(Level::critical, msg);
+}
+
+void Logger::setLevel(Logger::Level level) {
+    this->level = level;
+}
+
+void Logger::setStream(Logger::Level level, std::ostream &stream) {
+    streams[int(level)] = &stream;
+}
+
+void Logger::disable() {
+    for (auto &i : streams) {
+        i = nullptr;
+    }
+}
+
+void Logger::setAllStreams(std::ostream &stream) {
+    for (Level level = Level::debug; int(level) < (int(Level::critical) + 1);
+    level = Level(int(level) + 1)) {
+        streams[int(level)] = &stream;
+    }
+}
+
+Logger::Level Logger::parseLevel(const std::string &s) {
+    if (s == "debug") {
+        return Level::debug;
+    } else if (s == "info") {
+        return Level::info;
+    } else if (s == "warning") {
+        return Level::warning;
+    } else if (s == "critical") {
+        return Level::critical;
+    } else {
+        throw std::runtime_error("Invalid level: " + s);
+    }
+}
+
+
+void Logger::log(Logger::Level level, const std::string &msg) {
+    if (level >= this->level && streams[int(level)]) {
+        *streams[int(level)] << msg << std::endl;
+    }
+}

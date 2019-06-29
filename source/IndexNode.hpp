@@ -14,10 +14,5 @@ struct IndexNode {
     IndexNode(const Byte *data, size_t &p);
     Bytes toBytes() const;
 
-    KeyMapper &getMapper() {
-        if (!mapper) {
-            mapper = std::make_unique<KeyMapper>();
-        }
-        return *mapper;
-    }
+    KeyMapper &getMapper();
 };

@@ -1,4 +1,9 @@
 #include "RukoServer.hpp"
+#include "SocketServer.hpp"
+#include "utils.hpp"
+#include "objects/Object.hpp"
+#include "backtrace.hpp"
+#include "Logger.hpp"
 
 #include <utility>
 #include <mutex>
@@ -12,17 +17,14 @@
 #include <string>
 #include <thread>
 #include <fstream>
+#include <functional>
 #include <unordered_map>
-#include "SocketServer.hpp"
-#include "utils.hpp"
-#include "Object.hpp"
-#include "backtrace.hpp"
-
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <algorithm>
+
 
 std::set<RukoServer *> RukoServer::openServers;
 std::mutex RukoServer::openServersMut;
@@ -49,7 +51,7 @@ void RukoServer::run() {
     while (true) {
         Socket client = socket.acceptClient();
         lg.debug("New client " + std::to_string(client.getId()) + ".");
-        threads.emplace_back(std::bind([&] (Socket &socket) mutable {
+        threads.emplace_back(std::bind([&](Socket &socket) mutable {
             handleClient(socket);
         }, std::move(client)));
     }

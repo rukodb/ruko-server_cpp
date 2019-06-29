@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "Object.hpp"
+#include "objects/Object.hpp"
 
 Str jsonStr(const void *);
 Str jsonStr(int x);

@@ -3,7 +3,7 @@
 #pragma once
 
 #include <mutex>
-#include "Object.hpp"
+#include "objects/Object.hpp"
 #include "IndexManager.hpp"
 
 class RukoDb {

@@ -10,75 +10,21 @@
 #include <numeric>
 #include <iostream>
 
-ssize_t readSocket(int __fd, void *__buf, size_t __nbytes);
-
 
 class Socket {
 public:
-    explicit Socket(int fd) : fd(fd) {}
-
+    explicit Socket(int fd);
     Socket(const Socket &) = delete;
+    Socket(Socket &&other) noexcept;
+    friend void swap(Socket &a, Socket &b);
+    ~Socket();
 
-    Socket(Socket &&other) noexcept {
-        swap(*this, other);
-    }
-
-    friend void swap(Socket &a, Socket &b) {
-        std::swap(a.fd, b.fd);
-        std::swap(a.connected, b.connected);
-        std::swap(a.errorCode, b.errorCode);
-        std::swap(a.buffer, b.buffer);
-    }
-
-    ~Socket() {
-        if (fd >= 0) {
-            close(fd);
-        }
-    }
-
-    Bytes read(int numbytes) {
-        if (!connected) {
-            return {};
-        }
-        Vec<Bytes> parts;
-        for (int i = 0; i < numbytes;) {
-            parts.push_back(readBuffer(std::min(bufferSize, size_t(numbytes - i))));
-            auto len = parts.back().size();
-            if (len == 0) {
-                connected = false;
-                return concat(parts);
-            }
-            i += len;
-        }
-        return concat(parts);
-    }
-
-    void send(const Bytes &bytes) {
-        write(fd, bytes.data(), bytes.size());
-    }
-
-    Bytes readBuffer(size_t numbytes) {
-        eassert(numbytes <= bufferSize);
-        ssize_t valread = readSocket(fd, buffer, numbytes);
-        if (valread <= 0) {
-            connected = false;
-            errorCode = int(valread);
-            return {};
-        }
-        return {buffer, buffer + valread};
-    }
-
-    bool isConnected() const {
-        return connected;
-    }
-
-    int getErrorCode() const {
-        return errorCode;
-    }
-
-    int getId() const {
-        return fd;
-    }
+    Bytes read(int numbytes);
+    void send(const Bytes &bytes);
+    Bytes readBuffer(size_t numbytes);
+    bool isConnected() const;
+    int getErrorCode() const;
+    int getId() const;
 
 private:
     static constexpr size_t bufferSize = 1024;

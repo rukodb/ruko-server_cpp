@@ -2,7 +2,7 @@
 #include <string>
 #include <mutex>
 #include <set>
-#include "Object.hpp"
+#include "objects/Object.hpp"
 #include "SocketServer.hpp"
 #include "SaveScheduler.hpp"
 #include "RukoDb.hpp"

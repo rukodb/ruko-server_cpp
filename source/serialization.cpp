@@ -1,5 +1,5 @@
 #include "serialization.hpp"
-#include "Object.hpp"
+#include "objects/Object.hpp"
 #include "StarIndex.hpp"
 
 

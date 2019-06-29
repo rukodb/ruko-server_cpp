@@ -1,7 +1,6 @@
 #include "libs/catch.hpp"
 #include "../source/RukoServer.hpp"
-
-#include <stdio.h>
+#include "../source/objects/DictData.hpp"
 
 std::string objStr(const Object &obj) {
     std::string str = obj.toString();

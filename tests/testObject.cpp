@@ -1,5 +1,7 @@
 #include "libs/catch.hpp"
 #include "../source/RukoServer.hpp"
+#include "../source/objects/DictData.hpp"
+#include "../source/objects/FloatData.hpp"
 
 
 TEST_CASE("Object") {

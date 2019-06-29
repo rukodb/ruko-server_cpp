@@ -4,6 +4,10 @@
 #include "RukoDb.hpp"
 #include "IndexManager.hpp"
 #include "Logger.hpp"
+#include "objects/IndexableData.hpp"
+#include "objects/ListData.hpp"
+#include "objects/DictData.hpp"
+#include "objects/StringData.hpp"
 
 
 static Object filterFields(const Object &dict, const Vec<Str> &fields, const Vec<Str> &exclude) {

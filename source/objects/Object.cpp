@@ -1,4 +1,12 @@
 #include "Object.hpp"
+#include "IntData.hpp"
+#include "BoolData.hpp"
+#include "NullData.hpp"
+#include "DictData.hpp"
+#include "serialization.hpp"
+#include "StringData.hpp"
+#include "FloatData.hpp"
+#include "ListData.hpp"
 
 #define WITH_OBJ_TYPE(id, expr) switch (id) { \
     case NULL_ID: { \
@@ -88,6 +96,19 @@ void swap(Object &a, Object &b) {
 
 Object::~Object() {
     delete data;
+}
+
+Object::operator bool() const {
+    return bool(data);
+}
+
+bool Object::isEmpty() const {
+    return !data;
+}
+
+std::ostream &operator<<(std::ostream &stream, const Object &object) {
+    stream << object.toString();
+    return stream;
 }
 
 size_t Object::getId() const {

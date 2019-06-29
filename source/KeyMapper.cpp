@@ -1,6 +1,9 @@
 #include "KeyMapper.hpp"
 #include "serialization.hpp"
-#include "Object.hpp"
+#include "objects/Object.hpp"
+#include "objects/StringData.hpp"
+#include "objects/IndexableData.hpp"
+#include "objects/DictData.hpp"
 
 KeyMapper::KeyMapper(const Byte *data, size_t &p) : keyIndices(
         deserialize<Map<Str, Map<Str, Str>>>(data, p)) {}

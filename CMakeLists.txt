@@ -13,8 +13,8 @@ add_library(ruko-common
         source/IndexNode.hpp
         source/KeyMapper.cpp
         source/KeyMapper.hpp
-        source/Object.cpp
-        source/Object.hpp
+        source/objects/Object.cpp
+        source/objects/Object.hpp
         source/renderer.cpp
         source/renderer.hpp
         source/RukoDb.cpp
@@ -32,7 +32,31 @@ add_library(ruko-common
         source/StarIndex.cpp
         source/StarIndex.hpp
         source/utils.cpp
-        source/utils.hpp libs/backtrace.cpp libs/backtrace.hpp source/Logger.cpp)
+        source/utils.hpp
+        libs/backtrace.cpp
+        libs/backtrace.hpp
+        source/Logger.cpp
+
+        source/objects/BoolData.cpp
+        source/objects/BoolData.hpp
+        source/objects/DictData.cpp
+        source/objects/DictData.hpp
+        source/objects/FloatData.cpp
+        source/objects/FloatData.hpp
+        source/objects/IndexableData.cpp
+        source/objects/IndexableData.hpp
+        source/objects/IntData.cpp
+        source/objects/IntData.hpp
+        source/objects/ListData.cpp
+        source/objects/ListData.hpp
+        source/objects/NullData.cpp
+        source/objects/NullData.hpp
+        source/objects/ObjData.cpp
+        source/objects/ObjData.hpp
+        source/objects/Object.cpp
+        source/objects/Object.hpp
+        source/objects/StringData.cpp
+        source/objects/StringData.hpp)
 
 add_executable(ruko-server
         source/main.cpp)
