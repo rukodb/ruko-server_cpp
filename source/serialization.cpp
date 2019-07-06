@@ -214,7 +214,7 @@ Map<Str, Object> deserialize<Map<Str, Object>>(const Byte *data, size_t &p) {
 
 Bytes serialize(const Object &obj) {
     if (obj.isEmpty()) {
-        throw std::runtime_error("Serializing null object");
+        throw std::runtime_error("Serializing empty object");
     }
     return obj.toBytes();
 }
