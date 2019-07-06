@@ -53,7 +53,7 @@ Object::Object(bool val) : id(BOOL_ID), data(new BoolData(val)) {}
 
 Object::Object(int val) : id(INT_ID), data(new IntData(val)) {}
 
-Object::Object(nullptr_t val) : id(NULL_ID), data(new NullData()) {}
+Object::Object(std::nullptr_t val) : id(NULL_ID), data(new NullData()) {}
 
 Object::Object(const DictData &data) : id(DICT_ID), data(new DictData(data)) {}
 Object::Object(const DictMap &data) : id(DICT_ID), data(new DictData(data)) {}
