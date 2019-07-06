@@ -49,7 +49,7 @@ Vec<IndexableData::Entry> ListData::iter() {
     Vec<Entry> items;
     items.reserve(list.size());
     for (auto i = 0; i < list.size(); ++i) {
-        items.emplace_back(Entry{std::__cxx11::to_string(i), list[i]});
+        items.emplace_back(Entry{std::to_string(i), list[i]});
     }
     return items;
 }
@@ -58,7 +58,7 @@ Vec<IndexableData::ConstEntry> ListData::iter() const {
     Vec<ConstEntry> items;
     items.reserve(list.size());
     for (auto i = 0; i < list.size(); ++i) {
-        items.emplace_back(ConstEntry{std::__cxx11::to_string(i), list[i]});
+        items.emplace_back(ConstEntry{std::to_string(i), list[i]});
     }
     return items;
 }
