@@ -1,4 +1,5 @@
 #include "SocketServer.hpp"
+#include "Logger.hpp"
 
 SocketServer::SocketServer(uint16_t port, in_addr_t address) {
     int opt = 1;
@@ -13,8 +14,7 @@ SocketServer::SocketServer(uint16_t port, in_addr_t address) {
 
     // Forcefully attach socket
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
+        lg.debug("Problem setting options: " + std::string(strerror(errno)));
     }
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = address;
