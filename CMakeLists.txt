@@ -56,7 +56,26 @@ add_library(ruko-common
         source/objects/Object.cpp
         source/objects/Object.hpp
         source/objects/StringData.cpp
-        source/objects/StringData.hpp)
+        source/objects/StringData.hpp
+
+        source/commands/Command.cpp
+        source/commands/Command.hpp
+        source/commands/CreateMappingCommand.cpp
+        source/commands/CreateMappingCommand.hpp
+        source/commands/DeclareCommand.cpp
+        source/commands/DeclareCommand.hpp
+        source/commands/DeleteCommand.cpp
+        source/commands/DeleteCommand.hpp
+        source/commands/DeleteMappingCommand.cpp
+        source/commands/DeleteMappingCommand.hpp
+        source/commands/GetCommand.cpp
+        source/commands/GetCommand.hpp
+        source/commands/GetMappingsCommand.cpp
+        source/commands/GetMappingsCommand.hpp
+        source/commands/LputCommand.cpp
+        source/commands/LputCommand.hpp
+        source/commands/SetCommand.cpp
+        source/commands/SetCommand.hpp)
 
 add_executable(ruko-server
         source/main.cpp)

@@ -18,5 +18,15 @@ int32_t (*bytesToI32)(const Byte *, size_t &) = &_bytesToP32<int32_t>;
 Bytes (*u32ToBytes)(uint32_t) = &_p32ToBytes<uint32_t>;
 Bytes (*i32ToBytes)(int32_t) = &_p32ToBytes<int32_t>;
 
+Str join(const Vec<Str> &parts, const Str &sep) {
+    std::stringstream ss;
+    for (auto &part : parts) {
+        ss << part << sep;
+    }
+    auto res = ss.str();
+    if (!res.empty()) { res.pop_back(); }
+    return res;
+}
+
 
 

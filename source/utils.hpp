@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <istream>
 #include <ostream>
+#include <sstream>
 
 #define S1(x) #x
 #define S2(x) S1(x)
@@ -37,9 +38,9 @@ const T *bytesToPointer(const Bytes &bytes) {
 template<typename T>
 T _bytesToP32(const Byte *data, size_t &p) {
     T d = T(data[p]) +
-           T(data[p + 1] << 8) +
-           T(data[p + 2] << 16) +
-           T(data[p + 3] << 24);
+          T(data[p + 1] << 8) +
+          T(data[p + 2] << 16) +
+          T(data[p + 3] << 24);
     p += 4;
     return d;
 }
@@ -92,3 +93,5 @@ template<typename T>
 T concat(const Vec<T> &vec) {
     return concat<T, Vec<T>>(vec);
 }
+
+Str join(const Vec<Str> &parts, const Str &sep);

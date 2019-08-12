@@ -17,17 +17,8 @@ public:
     void save();
     void handleClient(Socket &client);
     Bytes readNextMessage(Socket &client);
-    Bytes handleGetMessage(const Byte *data, size_t &p);
-    Bytes handleSetMessage(const Byte *data, size_t &p);
-    Bytes handleDeleteMessage(const Byte *data, size_t &p);
-    Bytes handleDeclareMessage(const Byte *data, size_t &p);
-    Bytes handleLputMessage(const Byte *data, size_t &p);
-    Bytes handleCreateMappingMessage(const Byte *data, size_t &p);
-    Bytes handleDeleteMappingMessage(const Byte *data, size_t &p);
-    Bytes handleGetMappingsMessage(const Byte *data, size_t &p);
 
     static void init();
-
 
 private:
     static void signalHandler(int s);

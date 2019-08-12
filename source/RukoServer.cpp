@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <algorithm>
+#include <commands/Command.hpp>
 
 
 std::set<RukoServer *> RukoServer::openServers;
@@ -69,37 +70,13 @@ void RukoServer::handleClient(Socket &client) {
         }
         size_t p = 0;
         auto *data = bytes.data();
-        auto command = deserialize<Byte>(data, p);
         Bytes replyData;
         try {
-            switch (command) {
-                case 1:
-                    replyData = handleGetMessage(data, p);
-                    break;
-                case 2:
-                    replyData = handleSetMessage(data, p);
-                    break;
-                case 3:
-                    replyData = handleDeleteMessage(data, p);
-                    break;
-                case 4:
-                    replyData = handleDeclareMessage(data, p);
-                    break;
-                case 5:
-                    replyData = handleLputMessage(data, p);
-                    break;
-                case 6:
-                    replyData = handleCreateMappingMessage(data, p);
-                    break;
-                case 7:
-                    replyData = handleDeleteMappingMessage(data, p);
-                    break;
-                case 8:
-                    replyData = handleGetMappingsMessage(data, p);
-                    break;
-                default:
-                    std::cerr << "Invalid command: " << int(command) << std::endl;
-                    break;
+            auto command = Command::fromStream(data, p);
+            auto res = command->perform(db);
+            replyData = res.output;
+            if (res.didWrite) {
+                saveScheduler.registerWrite();
             }
         } catch (std::exception &e) {
             std::cerr << "Exception: " << backtraceStr() << std::endl;
@@ -122,65 +99,6 @@ Bytes RukoServer::readNextMessage(Socket &client) {
         return {};
     }
     return data;
-}
-
-Bytes RukoServer::handleGetMessage(const Byte *data, size_t &p) {
-    auto keys = deserialize<Vec<Str>>(data, p);
-    auto fields = deserialize<Vec<Str>>(data, p);
-    auto exclude = deserialize<Vec<Str>>(data, p);
-    const auto &res = db.get(keys, fields, exclude);
-    if (res.isEmpty()) {
-        return {};
-    }
-    return res.toBytes();
-}
-
-Bytes RukoServer::handleSetMessage(const Byte *data, size_t &p) {
-    auto keys = deserialize<Vec<Str>>(data, p);
-    auto obj = deserialize<Object>(data, p);
-    if (db.set(keys, obj)) {
-        saveScheduler.registerWrite();
-    }
-    return Bytes({});
-}
-
-Bytes RukoServer::handleDeleteMessage(const Byte *data, size_t &p) {
-    auto keys = deserialize<Vec<Str>>(data, p);
-    db.del(keys);
-    return Bytes();
-}
-
-Bytes RukoServer::handleDeclareMessage(const Byte *data, size_t &p) {
-    auto keys = deserialize<Vec<Str>>(data, p);
-    auto dataType = deserialize<Byte>(data, p);
-    auto indices = deserialize<Vec<Str>>(data, p);
-    db.declare(keys, dataType, indices);
-    saveScheduler.registerWrite();
-    return {};
-}
-
-Bytes RukoServer::handleLputMessage(const Byte *data, size_t &p) {
-    auto keys = deserialize<Vec<Str>>(data, p);
-    auto value = deserialize<Object>(data, p);
-    db.lput(keys, value);
-    return {};
-}
-
-Bytes RukoServer::handleCreateMappingMessage(const Byte *data, size_t &p) {
-    auto location = deserialize<Vec<Str>>(data, p);
-    auto filter = deserialize<Vec<Str>>(data, p);
-    db.createMapping(location, filter);
-    return Bytes({});
-}
-
-Bytes RukoServer::handleDeleteMappingMessage(const Byte *data, size_t &p) {
-    auto location = deserialize<Vec<Str>>(data, p);
-    db.deleteMapping(location);
-    return Bytes({});
-}
-
-Bytes RukoServer::handleGetMappingsMessage(const Byte *data, size_t &p) {
-    return db.getMappings().toBytes();
 }
 
 void RukoServer::init() {
