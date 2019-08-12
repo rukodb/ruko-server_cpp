@@ -25,6 +25,10 @@ void Logger::setLevel(Logger::Level level) {
     this->level = level;
 }
 
+Logger::Level Logger::getLevel() {
+    return level;
+}
+
 void Logger::setStream(Logger::Level level, std::ostream &stream) {
     streams[int(level)] = &stream;
 }

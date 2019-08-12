@@ -23,6 +23,7 @@ public:
     void critical(const std::string &msg);
 
     void setLevel(Level level);
+    Level getLevel();
     void setStream(Level level, std::ostream &stream);
     void disable();
     void setAllStreams(std::ostream &stream);

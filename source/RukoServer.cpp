@@ -73,6 +73,9 @@ void RukoServer::handleClient(Socket &client) {
         Bytes replyData;
         try {
             auto command = Command::fromStream(data, p);
+            if (lg.getLevel() <= Logger::Level::debug) {
+                lg.debug(command->toString());
+            }
             auto res = command->perform(db);
             replyData = res.output;
             if (res.didWrite) {
