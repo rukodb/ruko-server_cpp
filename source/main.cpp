@@ -10,6 +10,7 @@ struct Arguments {
         app.add_flag("--in-memory", inMemory, "Run database without file");
         app.add_flag("--as-json", asJson, "Additionally save json version of database");
         app.add_set("--log-level", logLevel, {"debug", "info", "warning", "critical"}, "Verbosity of logger");
+        app.add_flag("--interactive", isInteractive, "Read and run db commands from the terminal");
     }
 
     void parse() {
@@ -34,7 +35,7 @@ struct Arguments {
 
     CLI::App app;
     Str address = "localhost:44544", filename = "data.db", logLevel = "info";
-    bool inMemory = false, asJson = false;
+    bool inMemory = false, asJson = false, isInteractive = false;
 
     Str host;
     int port = -1;
@@ -54,6 +55,11 @@ int main(int argc, char const *argv[]) {
 
     RukoServer::init();
     RukoServer server(args.host, args.port, args.filename, 10000, 10, args.asJson);
-    server.run();
+    if (args.isInteractive) {
+        server.runInteractive();
+    } else {
+        server.run();
+    }
+    server.shutdown();
     return 0;
 }

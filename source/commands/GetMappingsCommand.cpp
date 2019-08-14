@@ -4,6 +4,8 @@
 
 GetMappingsCommand::GetMappingsCommand(const Byte *data, size_t &p) {}
 
+GetMappingsCommand::GetMappingsCommand(const char *&data) {}
+
 Str GetMappingsCommand::toString() {
     return "GET_MAPPINGS";
 }

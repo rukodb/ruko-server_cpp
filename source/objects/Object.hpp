@@ -88,6 +88,7 @@ public:
     Bytes toBytes() const;
     Str toString() const;
     static Object parse(const Str &s);
+    static Object parseFromString(const char *&c);
 
     template<typename R>
     R &get();
@@ -99,7 +100,6 @@ public:
     friend std::ostream &operator<<(std::ostream &stream, const Object &object);
 
 private:
-    static Object parseFromString(const char *&c);
     static void skipSpaces(const char *&c);
 
     ObjData *defaultData(size_t id);

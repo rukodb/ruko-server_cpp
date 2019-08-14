@@ -58,8 +58,49 @@ void RukoServer::run() {
     }
 }
 
+void RukoServer::runInteractive() {
+    while (true) {
+        std::string line;
+        std::cout << "> ";
+        if (!std::getline(std::cin, line)) {
+            break;
+        }
+        try {
+            if (line.empty()) {
+                continue;
+            }
+            const char *pos = line.c_str();
+            auto command = Command::fromString(pos);
+            if (!command) {
+                std::cout << "No such command. Type HELP for a list of commands." << std::endl;
+                continue;
+            }
+            if (*pos) {
+                std::cout << "Unrecognized extra parameters: " << pos << std::endl;
+                continue;
+            }
+            auto bytes = runCommand(std::move(command));
+            if (!bytes.empty()) {
+                const Byte *data = bytes.data();
+                size_t p = 0;
+                auto obj = Object(data, p);
+                std::cout << obj.toString() << std::endl;
+            }
+        } catch (const std::invalid_argument &e) {
+            std::cout << "Error parsing command: " << e.what() << std::endl;
+        } catch (const std::runtime_error &e) {
+            std::cout << "Error executing command: " << e.what() << std::endl;
+        }
+    }
+}
+
 void RukoServer::save() {
     db.save();
+}
+
+void RukoServer::shutdown() {
+    save();
+    saveScheduler.shutdown();
 }
 
 void RukoServer::handleClient(Socket &client) {
@@ -70,20 +111,7 @@ void RukoServer::handleClient(Socket &client) {
         }
         size_t p = 0;
         auto *data = bytes.data();
-        Bytes replyData;
-        try {
-            auto command = Command::fromStream(data, p);
-            if (lg.getLevel() <= Logger::Level::debug) {
-                lg.debug(command->toString());
-            }
-            auto res = command->perform(db);
-            replyData = res.output;
-            if (res.didWrite) {
-                saveScheduler.registerWrite();
-            }
-        } catch (std::exception &e) {
-            std::cerr << "Exception: " << backtraceStr() << std::endl;
-        }
+        auto replyData = runCommand(Command::fromStream(data, p));
         client.send(withLen(replyData));
     }
     lg.debug("Client " + std::to_string(client.getId()) + " left");
@@ -113,6 +141,22 @@ void RukoServer::init() {
 
     sigaction(SIGINT, &exitHandler, nullptr);
     sigaction(SIGTERM, &exitHandler, nullptr);
+}
+
+Bytes RukoServer::runCommand(Command::Ptr &&command) {
+    try {
+        if (lg.getLevel() <= Logger::Level::debug) {
+            lg.debug(command->toString());
+        }
+        auto res = command->perform(db);
+        if (res.didWrite) {
+            saveScheduler.registerWrite();
+        }
+        return res.output;
+    } catch (std::exception &e) {
+        std::cerr << "Exception: " << backtraceStr() << std::endl;
+    }
+    return {};
 }
 
 void RukoServer::signalHandler(int s) {

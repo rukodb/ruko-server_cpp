@@ -3,6 +3,7 @@
 #include <atomic>
 #include <ctime>
 #include <chrono>
+#include <mutex>
 #include <thread>
 
 class RukoServer;
@@ -12,11 +13,9 @@ public:
     SaveScheduler(int maxDeltaWrites, std::time_t maxDeltaTime, RukoServer &server) :
     maxDeltaWrites(maxDeltaWrites), maxDeltaTime(maxDeltaTime), lastSave(getTime()), server(server), thread(&SaveScheduler::run, this) {}
 
-    void registerWrite() {
-        ++writesSinceSave;
-    }
-
     void run();
+    void registerWrite();
+    void shutdown();
 
 private:
     time_t getTime() {
@@ -32,4 +31,7 @@ private:
     const std::time_t maxDeltaTime;
     RukoServer &server;
     std::thread thread;
+
+    std::atomic_bool isAlive{true};
+    std::mutex updateEvent;
 };

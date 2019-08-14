@@ -5,6 +5,7 @@
 class GetCommand : public Command {
 public:
     GetCommand(const Byte *data, size_t &p);
+    GetCommand(const char *&data);
     Str toString() override;
     CommandResult perform(RukoDb &db) override;
 

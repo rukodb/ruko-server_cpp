@@ -288,7 +288,7 @@ Object Object::parseFromString(const char *&c) {
             return Object(float(f));
         }
         default: {
-            throw std::runtime_error("Invalid start character of value!");
+            throw std::runtime_error("Invalid start character of value: " + std::string(1, *--c));
         }
     }
 }

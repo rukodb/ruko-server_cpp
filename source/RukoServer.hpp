@@ -6,6 +6,7 @@
 #include "SocketServer.hpp"
 #include "SaveScheduler.hpp"
 #include "RukoDb.hpp"
+#include "commands/Command.hpp"
 
 
 class RukoServer {
@@ -14,13 +15,16 @@ public:
     ~RukoServer();
 
     void run();
+    void runInteractive();
     void save();
+    void shutdown();
     void handleClient(Socket &client);
     Bytes readNextMessage(Socket &client);
 
     static void init();
 
 private:
+    Bytes runCommand(Command::Ptr &&command);
     static void signalHandler(int s);
     static in_addr_t parseHost(Str host);
 

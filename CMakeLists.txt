@@ -75,7 +75,11 @@ add_library(ruko-common
         source/commands/LputCommand.cpp
         source/commands/LputCommand.hpp
         source/commands/SetCommand.cpp
-        source/commands/SetCommand.hpp)
+        source/commands/SetCommand.hpp
+        source/commands/HelpCommand.cpp
+        source/commands/HelpCommand.hpp
+        source/commands/parsing.cpp
+        source/commands/parsing.hpp)
 
 add_executable(ruko-server
         source/main.cpp)

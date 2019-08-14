@@ -18,11 +18,10 @@ public:
     using Ptr = std::unique_ptr<Command>;
 
     static Ptr fromStream(const Byte *data, size_t &p);
+    static Ptr fromString(const char *&pos);
+    static Vec<Str> getNames();
 
     virtual std::string toString() = 0;
     virtual CommandResult perform(RukoDb &db) = 0;
-
-private:
-    int id;
 };
 

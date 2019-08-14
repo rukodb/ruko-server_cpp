@@ -2,8 +2,8 @@
 #include "RukoServer.hpp"
 
 void SaveScheduler::run() {
-    while (true) {
-        sleep(1000);
+    while (isAlive) {
+        updateEvent.lock();
         auto deltaTime = getTime() - lastSave;
         if ((deltaTime >= maxDeltaTime && writesSinceSave > 0) || writesSinceSave > maxDeltaWrites) {
             writesSinceSave = 0;
@@ -11,4 +11,15 @@ void SaveScheduler::run() {
             server.save();
         }
     }
+}
+
+void SaveScheduler::registerWrite() {
+    ++writesSinceSave;
+    updateEvent.unlock();
+}
+
+void SaveScheduler::shutdown() {
+    isAlive = false;
+    updateEvent.unlock();
+    thread.join();
 }
