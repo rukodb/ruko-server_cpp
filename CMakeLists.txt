@@ -89,7 +89,8 @@ add_executable(ruko-test
         tests/testIndexManager.cpp
         tests/testObject.cpp
         tests/testRuko.cpp
-        tests/testSerialize.cpp)
+        tests/testSerialize.cpp
+        tests/testDbEdgeCases.cpp)
 
 target_link_libraries(ruko-common pthread)
 target_link_libraries(ruko-common dl)

@@ -101,6 +101,8 @@ public:
 
 private:
     static void skipSpaces(const char *&c);
+    static int parseRawInt(const char *&c);
+    static int parseSciMult(const char *&c);
 
     ObjData *defaultData(size_t id);
     ObjData *deserializeData(const Byte *data, size_t &p);

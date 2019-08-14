@@ -65,5 +65,8 @@ TEST_CASE("Object") {
             CHECK(Object::parse(R"({"key":14})").toString() == R"({"key": 14})");
             CHECK(Object::parse(R"({"key":"value"})").toString() == R"({"key": "value"})");
         }
+        SECTION("edge cases") {
+            CHECK(Object::parse("1.5e+02").get<FloatData>().val == Approx(150));
+        }
     }
 }

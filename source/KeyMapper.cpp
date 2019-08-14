@@ -37,6 +37,9 @@ Str KeyMapper::get(const Str &byKey, const Str &key) {
     return objKey->second;
 }
 
+#include <iostream>
+
+
 void KeyMapper::registerVal(const Object &val, const Str &key) {
     if (val.has<DictData>()) {
         auto &obj = val.get<DictData>().map;
@@ -46,7 +49,8 @@ void KeyMapper::registerVal(const Object &val, const Str &key) {
             auto objItem = obj.find(hookedKey);
             if (objItem != obj.end() && objItem->second.getId() == STRING_ID) {
                 auto hookedVal = objItem->second.get<StringData>().val;
-                if (!hookedMap.emplace(hookedVal, key).second) {  // TODO: Support one-to-many indices
+                auto empResult = hookedMap.emplace(hookedVal, key);
+                if (!empResult.second && empResult.first->second != key) {  // TODO: Support one-to-many indices
                     throw std::runtime_error("Index is not one to one!");
                 }
             }
@@ -77,6 +81,7 @@ bool KeyMapper::hasIndex(const Str &index) {
     return keyIndices.find(index) != keyIndices.end();
 }
 
+
 void KeyMapper::createIndex(const Str &index, const Object &obj) {
     auto &map = keyIndices.emplace(index, Map<Str, Str>()).first->second;
     if (obj.has<IndexableData>()) {
@@ -85,7 +90,8 @@ void KeyMapper::createIndex(const Str &index, const Object &obj) {
                 auto &row = entry.value.get<DictData>().map;
                 auto it = row.find(index);
                 if (it != row.end() && it->second.has<StringData>()) {
-                    if (!map.emplace(it->second.get<StringData>().val, entry.key).second) {
+                    auto empResult = map.emplace(it->second.get<StringData>().val, entry.key);
+                    if (!empResult.second && empResult.first->second != entry.key) {
                         throw std::runtime_error("Index is not one to one!"); // TODO: Support one-to-many indices
                     }
                 }

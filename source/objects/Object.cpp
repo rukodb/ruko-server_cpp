@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Object.hpp"
 #include "IntData.hpp"
 #include "BoolData.hpp"
@@ -256,16 +257,9 @@ Object Object::parseFromString(const char *&c) {
         case '.': {
             --c;
             const char *first = c;
-            int number = 0;
-            while (*c != '.') {
-                int d = *c - '0';
-                if (d > 9 || d < 0) {
-                    break;
-                }
-                ++c;
-                number = number * 10 + d;
-            }
+            int number = parseRawInt(c);
             if (*c != '.') {
+                number *= parseSciMult(c);
                 skipSpaces(c);
                 return Object(number);
             }
@@ -284,6 +278,7 @@ Object Object::parseFromString(const char *&c) {
             if (c == first) {
                 throw std::runtime_error("Decimal without any digits!");
             }
+            f *= parseSciMult(c);
             skipSpaces(c);
             return Object(float(f));
         }
@@ -297,4 +292,37 @@ void Object::skipSpaces(const char *&c) {
     while (std::isspace(*c)) {
         ++c;
     }
+}
+
+int Object::parseRawInt(const char *&c) {
+    int number = 0;
+    while (*c != '.') {
+        int d = *c - '0';
+        if (d > 9 || d < 0) {
+            break;
+        }
+        ++c;
+        number = number * 10 + d;
+    }
+    return number;
+}
+
+int Object::parseSciMult(const char *&c) {
+    if (*c == 'e') {  // Scientific notation
+        ++c;
+        int sign = 1;
+        if (*c == '+') {
+            ++c;
+        } else if (*c == '-') {
+            sign = -1;
+            ++c;
+        }
+        auto begin = c;
+        auto power = sign * parseRawInt(c);
+        if (c == begin) {
+            throw std::runtime_error("No integer after scientific notation!");
+        }
+        return std::pow(10, power);
+    }
+    return 1;
 }

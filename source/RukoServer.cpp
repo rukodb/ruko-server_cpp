@@ -144,7 +144,6 @@ void RukoServer::init() {
 }
 
 Bytes RukoServer::runCommand(Command::Ptr &&command) {
-    try {
         if (lg.getLevel() <= Logger::Level::debug) {
             lg.debug(command->toString());
         }
@@ -153,9 +152,6 @@ Bytes RukoServer::runCommand(Command::Ptr &&command) {
             saveScheduler.registerWrite();
         }
         return res.output;
-    } catch (std::exception &e) {
-        std::cerr << "Exception: " << backtraceStr() << std::endl;
-    }
     return {};
 }
 
