@@ -3,7 +3,12 @@
 Logger lg;
 
 Logger::Logger(Logger::Level level) : level(level),
-                                      streams((unsigned int) (Level::critical) + 1, nullptr) {}
+                                      streams((unsigned int) (Level::critical) + 1, nullptr) {
+    setStream(Level::debug, std::cout);
+    setStream(Level::info, std::cout);
+    setStream(Level::warning, std::cerr);
+    setStream(Level::critical, std::cerr);
+}
 
 void Logger::debug(const std::string &msg) {
     log(Level::debug, msg);

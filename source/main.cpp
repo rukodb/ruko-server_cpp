@@ -48,10 +48,6 @@ int main(int argc, char const *argv[]) {
     args.parse();
     
     lg.setLevel(Logger::parseLevel(args.logLevel));
-    lg.setStream(Logger::Level::debug, std::cout);
-    lg.setStream(Logger::Level::info, std::cout);
-    lg.setStream(Logger::Level::warning, std::cerr);
-    lg.setStream(Logger::Level::critical, std::cerr);
 
     RukoServer::init();
     RukoServer server(args.host, args.port, args.filename, 10000, 10, args.asJson);

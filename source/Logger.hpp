@@ -15,7 +15,7 @@ public:
         critical
     };
 
-    explicit Logger(Level level = Level::debug);
+    explicit Logger(Level level = Level::critical);
 
     void debug(const std::string &msg);
     void info(const std::string &msg);
