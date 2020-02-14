@@ -237,6 +237,12 @@ TEST_CASE("ruko-indices") {
         db.lput({"users", "uuid:u0u", "devices"}, Object::parse(R"({"uuid": "u0d0u"})"));
         CHECK(db.get({"devices", "uuid:u0d0u", "uuid"}) == "u0d0u");
     }
+    SECTION("mapping write") {
+        db.createMapping({"mapping"}, {"things", "*"});
+        db.set({"things", "abc"}, Object::parse(R"({"key1": "val1", "key2": "val2"})"));
+        db.set({"mapping", "key1:val1", "key2"}, Object::parse(R"("newVal2")"));
+        REQUIRE(db.get({"things", "abc", "key2"}) == "newVal2");
+    }
     SECTION("saving") {
         SECTION("simple") {
             std::remove("tmp.db");
