@@ -26,9 +26,7 @@ void getNote(const std::string &uuid) {
 
 ```
 
-## Development
-
-*Warning: Here be dragons. Thou hast been warned.*
+## Compiling
 
 To compile, you need a `c++14` compiler and `cmake`:
 
@@ -38,3 +36,16 @@ cmake ..
 make -j4  # Use number of cores
 sudo make install  # Installs ruko-server binary into /usr/local/bin
 ```
+
+## Development
+
+*Warning: [Here be dragons](https://github.com/rukodb/ruko-server/blob/master/source/KeyMapper.cpp#L85). Thou hast been warned.*
+
+The project is layed out roughly as follows:
+
+ - `RukoServer` listens on a websocket for clients
+ - It also contains a `RukoDb` object that represents the database
+ - Messages get serialized into `Command`s and handled by `RukoDb` methods
+ - `RukoDb` has two main objects: a `db: Object` object and an `indices: IndexManager` object
+   - `IndexManager` maintains a subtree of the `db` data structure whose leaves/nodes contain precalculated indices for any dictionary/list whose values have been queried by an attribute lookup operation (ie. `GET users.email:abc@d.com` creates an index for `users.*` that tracks the `email` key).
+   - `Object` is just a JSON class that represents data and can be serialized/parsed both in binary form (ie. for parsing from commands / disk) or in JSON form (ie. for exporting data or creating from a string for tests)
