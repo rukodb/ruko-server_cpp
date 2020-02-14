@@ -18,6 +18,14 @@ Vec<Str> split(const Str &s, char delim) {
 
 IndexManager::Frame IndexManager::Frame::traverse(const Str &key, bool createIndex, bool createObj) {
     Frame next{nullptr, nullptr, key};
+    if (index) {
+        auto &children = (*index)->children;
+        if (children.find(key) != children.end()) {
+            next.index = &children.at(key);
+        } else if (createIndex) {
+            next.index = &children.emplace(key, std::make_unique<IndexNode>()).first->second;
+        }
+    }
     if (obj) {
         if (createObj && !obj->has<IndexableData>()) {
             *obj = Object(DICT_ID);  // TODO: Handle updating indices
@@ -26,17 +34,9 @@ IndexManager::Frame IndexManager::Frame::traverse(const Str &key, bool createInd
             auto &data = obj->get<IndexableData>();
             if (data.hasKey(key)) {
                 next.obj = &data[key];
-            } else if (createObj) {
+            } else if (createObj && !next.index) {
                 next.obj = data.add(key, Object());
             }
-        }
-    }
-    if (index) {
-        auto &children = (*index)->children;
-        if (children.find(key) != children.end()) {
-            next.index = &children.at(key);
-        } else if (createIndex) {
-            next.index = &children.emplace(key, std::make_unique<IndexNode>()).first->second;
         }
     }
     return next;
