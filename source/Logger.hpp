@@ -61,13 +61,15 @@ public:
 private:
     template <typename... Args>
     void log(Level level, const std::string &fmt, Args &&... args) {
-        size_t size = snprintf(nullptr, 0, fmt.c_str(), args...) + 1;
-        if (size <= 0) {
-            throw std::runtime_error("Formatting error:" + std::string(fmt));
+        if (level >= this->level) {
+            size_t size = snprintf(nullptr, 0, fmt.c_str(), args...) + 1;
+            if (size <= 0) {
+                throw std::runtime_error("Formatting error:" + std::string(fmt));
+            }
+            std::unique_ptr<char[]> buffer(new char[size]);
+            snprintf(buffer.get(), size, fmt.c_str(), std::forward<Args>(args)...);
+            *streams[int(level)] << buffer.get() << std::endl;
         }
-        std::unique_ptr<char[]> buffer(new char[size]);
-        snprintf(buffer.get(), size, fmt.c_str(), std::forward<Args>(args)...);
-        *streams[int(level)] << buffer.get() << std::endl;
     }
 
     std::vector<std::ostream *> streams;

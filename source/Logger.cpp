@@ -4,8 +4,7 @@
 Logger lg;
 
 Logger::Logger(Logger::Level level) : level(level),
-                                      streams((unsigned int) (Level::critical) + 1, nullptr) {
-    streams.resize((size_t)Level::temp + 1, nullptr);
+                                      streams((unsigned int) (Level::temp) + 1, nullptr) {
     setStream(Level::verbose, std::cout);
     setStream(Level::debug, std::cout);
     setStream(Level::info, std::cout);
