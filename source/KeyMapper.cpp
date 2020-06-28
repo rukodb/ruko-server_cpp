@@ -30,7 +30,7 @@ void KeyMapper::removeExtraIndices(const Vec<Str> &validIndices) {
 }
 
 Str KeyMapper::get(const Str &byKey, const Str &key) {
-    auto map = keyIndices[byKey];
+    auto &map = keyIndices[byKey];
     auto objKey = map.find(key);
     if (objKey == map.end()) {
         return "";
