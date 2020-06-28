@@ -175,6 +175,20 @@ TEST_CASE("ruko-indices") {
             db.set({"users"}, Object(LIST_ID));
             REQUIRE(db.get({}) == Object::parse(R"({"users": []})"));
         }
+        SECTION("deletion") {
+            db.set({"users"}, Object(LIST_ID));
+            db.get({"users", "email:abc@abc.com"});
+            db.del({"users"});
+            db.set({"users"}, Object(LIST_ID));
+            REQUIRE(db.get({}) == Object::parse(R"({"users": []})"));
+        }
+        SECTION("deletion method 2") {
+            db.set({"users"}, Object(LIST_ID));
+            db.get({"users", "email:abc@abc.com"});
+            db.set({}, Object(DICT_ID));
+            db.set({"users"}, Object(LIST_ID));
+            REQUIRE(db.get({}) == Object::parse(R"({"users": []})"));
+        }
     }
     SECTION("mapping") {
         db.set({"users"}, Object::parse(R"([{"uuid": "u0u", "devices": [{"uuid": "u0d0u"}, {"uuid": "u0d1u"}]},

@@ -189,24 +189,33 @@ void IndexManager::recurseHandleDelete(deque<IndexManager::Frame> &frames, Vec<i
 
     if (frame.obj->has<IndexableData>()) {  // TODO: Handle when a subkey is a mapping
         auto data = frame.obj->get<IndexableData>().iter();
-        for (auto &i : data) {
-            IndexNode::Ptr *next = nullptr;
+        for (auto &objChild : data) {
+            IndexNode::Ptr *nextNode = nullptr;
             if (frame.index && *frame.index) {
-                if ((*frame.index)->mapper) {
-                    (*frame.index)->mapper->unregisterVal(i.value, i.key);
-                }
-                auto key2 = i.key;
                 IndexNode::Ptr &node = *frame.index;
                 auto &children = node->children;
-
-                auto it = children.find(key2);
-                if (it != (*frame.index)->children.end()) {
-                    next = &it->second;
+                auto it = children.find(objChild.key);
+                if (it != children.end()) {
+                    nextNode = &it->second;
                 }
             }
-            frames.emplace_back(Frame{&i.value, next, i.key});
+            frames.emplace_back(Frame{&objChild.value, nextNode, objChild.key});
             recurseHandleDelete(frames, validPatterns);
             frames.pop_back();
+        }
+    }
+    if (frames.size() > 1) {
+        auto &parentFrame = frames[frames.size() - 2];
+        if (parentFrame.index && *parentFrame.index) {
+            IndexNode::Ptr &node = *parentFrame.index;
+            if (node->mapper) {
+                node->mapper->unregisterVal(*frame.obj, frame.key);
+            }
+            auto &children = node->children;
+            auto it = children.find(frame.key);
+            if (it != children.end()) {
+                children.erase(it);
+            }
         }
     }
 }
