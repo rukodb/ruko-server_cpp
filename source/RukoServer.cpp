@@ -149,9 +149,9 @@ void RukoServer::init() {
 }
 
 Bytes RukoServer::runCommand(Command::Ptr &&command) {
-        if (lg.getLevel() <= Logger::Level::debug) {
+        if (lg.getLevel() <= Logger::Level::verbose) {
             auto cmd = command->toString();
-            lg.debug("%s", cmd.c_str());
+            lg.verbose("%s", cmd.c_str());
         }
         if (commandsLog.is_open()) {
             commandsLog << command->toString() << std::endl;
