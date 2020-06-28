@@ -5,10 +5,13 @@ Logger lg;
 
 Logger::Logger(Logger::Level level) : level(level),
                                       streams((unsigned int) (Level::critical) + 1, nullptr) {
+    streams.resize((size_t)Level::temp + 1, nullptr);
+    setStream(Level::verbose, std::cout);
     setStream(Level::debug, std::cout);
     setStream(Level::info, std::cout);
     setStream(Level::warning, std::cerr);
     setStream(Level::critical, std::cerr);
+    setStream(Level::temp, std::cerr);
 }
 
 void Logger::setLevel(Logger::Level level) {
@@ -37,7 +40,9 @@ void Logger::setAllStreams(std::ostream &stream) {
 }
 
 Logger::Level Logger::parseLevel(const std::string &s) {
-    if (s == "debug") {
+    if (s == "verbose") {
+        return Level::verbose;
+    } else if (s == "debug") {
         return Level::debug;
     } else if (s == "info") {
         return Level::info;
@@ -45,6 +50,8 @@ Logger::Level Logger::parseLevel(const std::string &s) {
         return Level::warning;
     } else if (s == "critical") {
         return Level::critical;
+    } else if (s == "temp") {
+        return Level::temp;
     } else {
         throw std::runtime_error("Invalid level: " + s);
     }

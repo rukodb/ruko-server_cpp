@@ -10,13 +10,20 @@
 class Logger {
 public:
     enum class Level : int {
-        debug = 0,
+        verbose = 0,
+        debug,
         info,
         warning,
-        critical
+        critical,
+        temp  // Use for temporary logging during debugging
     };
 
-    explicit Logger(Level level = Level::critical);
+    explicit Logger(Level level = Level::temp);
+
+    template <typename... Args>
+    void verbose(const std::string &fmt, Args &&... args) {
+        log(Level::verbose, fmt, std::forward<Args>(args)...);
+    }
 
     template <typename... Args>
     void debug(const std::string &fmt, Args &&... args) {
@@ -36,6 +43,11 @@ public:
     template <typename... Args>
     void critical(const std::string &fmt, Args &&... args) {
         log(Level::critical, fmt, std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    void temp(const std::string &fmt, Args &&... args) {
+        log(Level::temp, fmt, std::forward<Args>(args)...);
     }
 
     void setLevel(Level level);
