@@ -1,8 +1,9 @@
 #pragma once
 
-#include <stdexcept>
 #include <iostream>
+#include <memory>
 #include <ostream>
+#include <stdexcept>
 #include <vector>
 
 
@@ -17,10 +18,25 @@ public:
 
     explicit Logger(Level level = Level::critical);
 
-    void debug(const std::string &msg);
-    void info(const std::string &msg);
-    void warning(const std::string &msg);
-    void critical(const std::string &msg);
+    template <typename... Args>
+    void debug(const std::string &fmt, Args &&... args) {
+        log(Level::debug, fmt, std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    void info(const std::string &fmt, Args &&... args) {
+        log(Level::info, fmt, std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    void warning(const std::string &fmt, Args &&... args) {
+        log(Level::warning, fmt, std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    void critical(const std::string &fmt, Args &&... args) {
+        log(Level::critical, fmt, std::forward<Args>(args)...);
+    }
 
     void setLevel(Level level);
     Level getLevel();
@@ -31,7 +47,16 @@ public:
     static Level parseLevel(const std::string &s);
 
 private:
-    void log(Level level, const std::string &msg);
+    template <typename... Args>
+    void log(Level level, const std::string &fmt, Args &&... args) {
+        size_t size = snprintf(nullptr, 0, fmt.c_str(), args...) + 1;
+        if (size <= 0) {
+            throw std::runtime_error("Formatting error:" + std::string(fmt));
+        }
+        std::unique_ptr<char[]> buffer(new char[size]);
+        snprintf(buffer.get(), size, fmt.c_str(), std::forward<Args>(args)...);
+        *streams[int(level)] << buffer.get() << std::endl;
+    }
 
     std::vector<std::ostream *> streams;
 

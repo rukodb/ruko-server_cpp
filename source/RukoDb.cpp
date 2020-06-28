@@ -232,7 +232,8 @@ bool RukoDb::declare(const Vec<Str> &keys, size_t dataType, const Vec<Str> &indi
         return false;
     }
     if (!obj.isEmpty() && obj.getId() != dataType) {
-        lg.warning("declaring key over key of wrong type. Removing old value: " + obj.toString());
+        auto objStr = obj.toString();
+        lg.warning("declaring key over key of wrong type. Removing old value: %s", objStr.c_str());
         this->indices.handleDelete(frames, db);
     }
     obj = Object(dataType);

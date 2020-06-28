@@ -2,6 +2,7 @@
 #include <string>
 #include <mutex>
 #include <set>
+#include <fstream>
 #include "objects/Object.hpp"
 #include "SocketServer.hpp"
 #include "SaveScheduler.hpp"
@@ -11,7 +12,7 @@
 
 class RukoServer {
 public:
-    RukoServer(const Str &host, int port, const Str &filename = "", int maxDeltaWrites = 10000, std::size_t maxDeltaTime = 10, bool saveJson = false);
+    RukoServer(const Str &host, int port, const Str &filename = "", int maxDeltaWrites = 10000, std::size_t maxDeltaTime = 10, bool saveJson = false, const Str &logCommandsFile = "");
     ~RukoServer();
 
     void run();
@@ -33,6 +34,8 @@ private:
     RukoDb db;
     SocketServer socket;
     SaveScheduler saveScheduler;
+    
+    std::ofstream commandsLog;
 
     static std::set<RukoServer*> openServers;
     static std::mutex openServersMut;

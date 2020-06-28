@@ -4,6 +4,7 @@
 #include "objects/StringData.hpp"
 #include "objects/IndexableData.hpp"
 #include "objects/DictData.hpp"
+#include "Logger.hpp"
 
 KeyMapper::KeyMapper(const Byte *data, size_t &p) : keyIndices(
         deserialize<Map<Str, Map<Str, Str>>>(data, p)) {}
@@ -36,9 +37,6 @@ Str KeyMapper::get(const Str &byKey, const Str &key) {
     }
     return objKey->second;
 }
-
-#include <iostream>
-
 
 void KeyMapper::registerVal(const Object &val, const Str &key) {
     if (val.has<DictData>()) {
@@ -85,6 +83,7 @@ bool KeyMapper::hasIndex(const Str &index) {
 void KeyMapper::createIndex(const Str &index, const Object &obj) {
     auto &map = keyIndices.emplace(index, Map<Str, Str>()).first->second;
     if (obj.has<IndexableData>()) {
+        lg.debug("Creating index for %s...", index.c_str());
         for (auto &entry : obj.get<IndexableData>().iter()) {
             if (entry.value.has<DictData>()) {
                 auto &row = entry.value.get<DictData>().map;

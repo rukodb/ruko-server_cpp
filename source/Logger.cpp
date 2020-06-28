@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include "Logger.hpp"
 
 Logger lg;
@@ -8,22 +9,6 @@ Logger::Logger(Logger::Level level) : level(level),
     setStream(Level::info, std::cout);
     setStream(Level::warning, std::cerr);
     setStream(Level::critical, std::cerr);
-}
-
-void Logger::debug(const std::string &msg) {
-    log(Level::debug, msg);
-}
-
-void Logger::info(const std::string &msg) {
-    log(Level::info, msg);
-}
-
-void Logger::warning(const std::string &msg) {
-    log(Level::warning, msg);
-}
-
-void Logger::critical(const std::string &msg) {
-    log(Level::critical, msg);
 }
 
 void Logger::setLevel(Logger::Level level) {
@@ -62,12 +47,5 @@ Logger::Level Logger::parseLevel(const std::string &s) {
         return Level::critical;
     } else {
         throw std::runtime_error("Invalid level: " + s);
-    }
-}
-
-
-void Logger::log(Logger::Level level, const std::string &msg) {
-    if (level >= this->level && streams[int(level)]) {
-        *streams[int(level)] << msg << std::endl;
     }
 }

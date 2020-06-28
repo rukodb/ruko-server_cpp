@@ -11,6 +11,7 @@ struct Arguments {
         app.add_flag("--as-json", asJson, "Additionally save json version of database");
         app.add_set("--log-level", logLevel, {"debug", "info", "warning", "critical"}, "Verbosity of logger");
         app.add_flag("--interactive", isInteractive, "Read and run db commands from the terminal");
+        app.add_option("--log-commands", logCommandsFile, "Log all commands to this file");
     }
 
     void parse() {
@@ -36,6 +37,7 @@ struct Arguments {
     CLI::App app;
     Str address = "localhost:44544", filename = "data.db", logLevel = "info";
     bool inMemory = false, asJson = false, isInteractive = false;
+    Str logCommandsFile;
 
     Str host;
     int port = -1;
@@ -50,7 +52,7 @@ int main(int argc, char const *argv[]) {
     lg.setLevel(Logger::parseLevel(args.logLevel));
 
     RukoServer::init();
-    RukoServer server(args.host, args.port, args.filename, 10000, 10, args.asJson);
+    RukoServer server(args.host, args.port, args.filename, 10000, 10, args.asJson, args.logCommandsFile);
     if (args.isInteractive) {
         server.runInteractive();
     } else {

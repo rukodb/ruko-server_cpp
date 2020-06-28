@@ -14,7 +14,7 @@ SocketServer::SocketServer(uint16_t port, in_addr_t address) {
 
     // Forcefully attach socket
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-        lg.debug("Problem setting options: " + std::string(strerror(errno)));
+        lg.debug("Problem setting options: %d", strerror(errno));
     }
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = address;

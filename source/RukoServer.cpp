@@ -32,10 +32,15 @@ std::mutex RukoServer::openServersMut;
 
 
 RukoServer::RukoServer(const Str &host, int port, const Str &filename, int maxDeltaWrites,
-                       std::size_t maxDeltaTime, bool saveJson) :
+                       std::size_t maxDeltaTime, bool saveJson, const Str &logCommandsFile) :
         host(host), port(port), db(filename, saveJson), socket(uint16_t(port), parseHost(host)),
-        saveScheduler(maxDeltaWrites, maxDeltaTime, *this) {
-
+        saveScheduler(maxDeltaWrites, maxDeltaTime, *this), commandsLog() {
+    if (!logCommandsFile.empty()) {
+        commandsLog.open(logCommandsFile, std::ofstream::out | std::ofstream::app);
+        if (!commandsLog.is_open()) {
+            lg.warning("Failed to write to commands file: %s", logCommandsFile.c_str());
+        }
+    }
     std::lock_guard<std::mutex> lock(openServersMut);
     openServers.emplace(this);
 }
@@ -48,10 +53,10 @@ RukoServer::~RukoServer() {
 void RukoServer::run() {
     Vec<std::thread> threads;
 
-    lg.info("Listening on " + host + ":" + std::to_string(port) + "...");
+    lg.info("Listening on %s:%d...", host.c_str(), port);
     while (true) {
         Socket client = socket.acceptClient();
-        lg.debug("New client " + std::to_string(client.getId()) + ".");
+        lg.debug("New client %d.", client.getId());
         threads.emplace_back(std::bind([&](Socket &socket) mutable {
             handleClient(socket);
         }, std::move(client)));
@@ -114,7 +119,7 @@ void RukoServer::handleClient(Socket &client) {
         auto replyData = runCommand(Command::fromStream(data, p));
         client.send(withLen(replyData));
     }
-    lg.debug("Client " + std::to_string(client.getId()) + " left");
+    lg.debug("Client %d left", client.getId());
 }
 
 Bytes RukoServer::readNextMessage(Socket &client) {
@@ -145,7 +150,11 @@ void RukoServer::init() {
 
 Bytes RukoServer::runCommand(Command::Ptr &&command) {
         if (lg.getLevel() <= Logger::Level::debug) {
-            lg.debug(command->toString());
+            auto cmd = command->toString();
+            lg.debug("%s", cmd.c_str());
+        }
+        if (commandsLog.is_open()) {
+            commandsLog << command->toString() << std::endl;
         }
         auto res = command->perform(db);
         if (res.didWrite) {
