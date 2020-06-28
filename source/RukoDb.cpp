@@ -101,6 +101,9 @@ bool RukoDb::set(const Vec<Str> &keys, const Object &value) {
     std::lock_guard<std::mutex> lock(mut);
     auto frames = indices.traverseTo(keys, db, false, true);
     if (frames.back().invalid(false, true)) {
+        lg.info(frames.back().key);
+        lg.info("%p", frames.back().obj);
+        lg.warning("Write location is invalid");
         return false;
     }
     indices.handleDelete(frames, db);
@@ -233,7 +236,7 @@ bool RukoDb::declare(const Vec<Str> &keys, size_t dataType, const Vec<Str> &indi
     }
     if (!obj.isEmpty() && obj.getId() != dataType) {
         auto objStr = obj.toString();
-        lg.warning("declaring key over key of wrong type. Removing old value: %s", objStr.c_str());
+        lg.warning("Declaring key over key of wrong type. Removing old value: %s", objStr.c_str());
         this->indices.handleDelete(frames, db);
     }
     obj = Object(dataType);

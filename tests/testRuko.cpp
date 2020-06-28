@@ -170,6 +170,11 @@ TEST_CASE("ruko-indices") {
             CHECK(db.get({"a", "uuid:"}) ==
                   Object::parse(R"({"a0": {"uuid": "a0", "data": "d0"}, "a1": {"uuid": "a1", "data": "d1"}})"));
         }
+        SECTION("empty overwrite") {
+            db.get({"users", "email:abc@abc.com"});
+            db.set({"users"}, Object(LIST_ID));
+            REQUIRE(db.get({}) == Object::parse(R"({"users": []})"));
+        }
     }
     SECTION("mapping") {
         db.set({"users"}, Object::parse(R"([{"uuid": "u0u", "devices": [{"uuid": "u0d0u"}, {"uuid": "u0d1u"}]},

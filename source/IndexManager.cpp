@@ -3,6 +3,7 @@
 #include "objects/IndexableData.hpp"
 #include "objects/ListData.hpp"
 #include "objects/DictData.hpp"
+#include "Logger.hpp"
 
 Vec<Str> split(const Str &s, char delim) {
     Vec<Str> result;
@@ -270,10 +271,14 @@ deque<IndexManager::Frame> IndexManager::traverseTo(Vec<Str> keys, Object &dbRoo
             continue;
         }
         if (key.find(':') != Str::npos && key.find(':') != key.size() - 1) {  // Index key
-            key = resolveIndexKey(key, frames, dbRoot);
-            if (key.find('\31') != Str::npos) {  // Absolute key
-                frames = traverseTo(fromDotted(key), dbRoot, createIndices, createObj);
-                continue;
+            if (!frames.back().obj && !frames.back().index) {
+                key = ""; // Prevent index creation at non-existent locations
+            } else {
+                key = resolveIndexKey(key, frames, dbRoot);
+                if (key.find('\31') != Str::npos) {  // Absolute key
+                    frames = traverseTo(fromDotted(key), dbRoot, createIndices, createObj);
+                    continue;
+                }
             }
         }
 
