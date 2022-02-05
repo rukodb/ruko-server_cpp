@@ -23,8 +23,8 @@ void addNote(const std::string &title, const std::string &content) {
     db.lput({"notes"}, Object::parse::(R"({"id": ")" + std::to_string(++nodeId) + R"(", "title": ")" + title + R"(", "content": ")", + content + R"("})"));
 }
 
-void getNote(const std::string &uuid) {
-    return db.get({"notes", "uuid:" + uuid});
+void getNote(const std::string &id) {
+    return db.get({"notes", "id:" + id});
 }
 
 ```
