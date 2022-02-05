@@ -5,6 +5,8 @@
 Ruko is a dead simple in memory database where json is a first
 class citezen.
 
+[The Python client library](https://github.com/rukodb/ruko) has more background and details on the protocol.
+
 ## Usage
 
 ```cpp
