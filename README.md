@@ -19,7 +19,8 @@ void getNotes() {
 }
 
 void addNote(const std::string &title, const std::string &content) {
-    db.lput({"notes"}, Object::parse::(R"({"uuid": createUuid(), "title": ")" + title + R"(", "content": ")", + content + R"("})"));
+    static int noteId = 0;
+    db.lput({"notes"}, Object::parse::(R"({"id": ")" + std::to_string(++nodeId) + R"(", "title": ")" + title + R"(", "content": ")", + content + R"("})"));
 }
 
 void getNote(const std::string &uuid) {
